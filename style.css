@@ -1,0 +1,78 @@
+.card-img-top {
+  width: 100%;
+  height: 12vw;
+  object-fit: cover;
+}
+
+.card-text {
+  color:rgb(79, 79, 79);
+  font-weight: 400;
+  font-size: 0.9rem;
+}
+
+.restaurantCard {
+   cursor: pointer; 
+  }
+
+.search_box_wrap {
+    padding: 0 10px;
+  }
+  .city_select {
+    position: relative;
+  }
+  
+  #city_input,
+  #search_input {
+    font-size: 12px;
+    border: 1px solid #e4e4e4;
+    padding: 10px 10px 10px 27px;
+    margin: 0;
+    float: left;
+    width: 100%;
+    background-repeat: no-repeat;
+    background-position: 7px center;
+    background-size: 15px auto;
+  }
+  #city_input {
+    background-image: url("https://b.zmtcdn.com/images/widgets/location.png?output-format=webp");
+    border-right: 0;
+    border-bottom-left-radius: 5px;
+    border-top-left-radius: 5px;
+  }
+  #search_input {
+    background-image: url("https://b.zmtcdn.com/images/widgets/search.png?output-format=webp");
+  }
+  #searchBtn {
+    background: #cb202d;
+    font-size: 12px;
+    color: #fff;
+    padding: 11px;
+    margin: 0;
+    border: 0;
+    float: left;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    width: 100%;
+    border-bottom-right-radius: 5px;
+    border-top-right-radius: 5px;
+  }
+  .search_box_wrap {
+    width: 100%;
+    display: table;
+    vertical-align: top;
+  }
+  .search_box {
+    display: table-cell;
+    vertical-align: top;
+    width: 60%;
+  }
+  .search_btn {
+    display: table-cell;
+    vertical-align: top;
+    width: 15%;
+  }
+  .search_box_wrap.no_city .search_box {
+    width: 77%;
+  }
+  
