@@ -1,18 +1,17 @@
-// let cityName = document.getElementById('city_input').value;
-// document.getElementById('city_input').addEventListener('change', function(event) {
-//     getLocationByCityName(document.getElementById('city_input').value);
-// });
-// console.log("enriching data for city:" + cityName);
 getLocationByCityName();
-// getRestaurantsFromCityName(8, 100);
-// let foodCategories = callZomatoDeveloperAPI('https://developers.zomato.com/api/v2.1/categories');
 
-
+/**
+ * Event listener for search button
+ */
 let search_button = document.getElementById('searchBtn');
 search_button.addEventListener('click',function(event){
     getLocationByCityName();
 });
 
+
+/**
+ * Function to query location details from City name
+ */
 async function getLocationByCityName() {
     let cityName = document.getElementById('city_input').value;
     console.log("calling functon getLOCATION for city:" + cityName );
@@ -29,9 +28,13 @@ async function getLocationByCityName() {
         console.log("calling functon getRestaurantsFromCityName for cityId:" + data.entity_id);
         for(let location of data.location_suggestions) {
             if(location.entity_id !==undefined) {
+                document.getElementById('city_input').value = location.city_name;
+
                 createCuisineOptions(location.entity_id);
                 let selectedCuisine = document.getElementById("cuisines").value;
                 console.log('selected cuisine is:' + selectedCuisine);
+                getCollectionByCityName(location.entity_id);
+
                 getRestaurantsFromCityName(location.entity_id, selectedCuisine);
                 
             }
@@ -43,6 +46,10 @@ async function getLocationByCityName() {
     });
 }
 
+/**
+ * Get a list of all cuisines of restaurants listed in a city. 
+ * @param {*} cityId 
+ */
 async function createCuisineOptions(cityId) {
     return await fetch('https://developers.zomato.com/api/v2.1/cuisines?city_id=' + cityId, {
         method: 'GET',
@@ -76,8 +83,11 @@ async function createCuisineOptions(cityId) {
 }
 
 
-//console.log("food catagories are: "+foodCategories);
-
+/**
+ * Search for restaurants using cityName and Cuisine name in input
+ * @param {*} cityId 
+ * @param {*} selectedCuisine 
+ */
 async function getRestaurantsFromCityName(cityId,selectedCuisine ) {
     let url = 'https://developers.zomato.com/api/v2.1/search?entity_id=' + cityId + '&entity_type=city';
     if(selectedCuisine!== 'Search for restaurants on Zomato') {
@@ -93,11 +103,22 @@ async function getRestaurantsFromCityName(cityId,selectedCuisine ) {
     })
     .then(response => response.json())
     .then(data => {
+        let cityName = document.getElementById('city_input').value;
         console.log('Lucknow data is:', data);
         document.getElementById('restaurantsDiv').remove();
         let restaurantsDiv = document.createElement('div');
         restaurantsDiv.id = 'restaurantsDiv';
         restaurantsDiv.classList.add('p-5');
+
+        let restaurantsDivHeading = document.createElement('h2');
+        restaurantsDivHeading.innerText = "Restaurants in " + cityName;
+
+        let restaurantsDivDescription = document.createElement('p');
+        restaurantsDivDescription.classList.add('card-text');
+        restaurantsDivDescription.setAttribute('style', 'font-size:1.1rem');
+        restaurantsDivDescription.innerText = 'Discover the best food & drinks in ' + cityName + ' based on trends';
+
+        restaurantsDiv.append(restaurantsDivHeading, restaurantsDivDescription);
         
         document.body.append(restaurantsDiv);
 
@@ -123,6 +144,10 @@ async function getRestaurantsFromCityName(cityId,selectedCuisine ) {
     });
 }
 
+/**
+ * Creates restaurant card using restaurant data from response
+ * @param {} restaurantData 
+ */
 function createRestaurantCard(restaurantData) {
     let resCard = document.createElement('div');
     resCard.classList.add('card', 'restaurantCard');
@@ -138,6 +163,10 @@ function createRestaurantCard(restaurantData) {
     return resCard;
 }
 
+/**
+ * Function to form card image using restaurant data
+ * @param {} restaurantData 
+ */
 function formCardImage(restaurantData) {
     let cardImg = document.createElement('img');
     cardImg.classList.add('card-img-top','img-fluid', 'p-0', 'm-0');
@@ -148,6 +177,11 @@ function formCardImage(restaurantData) {
     return cardImg;
 }
 
+
+/**
+ * Function to form card body div for restaurant card
+ * @param {} restaurantData 
+ */
 function formCardBodyDiv(restaurantData) {
     let cardBodyDiv = document.createElement('div');
     cardBodyDiv.classList.add('card-body', 'm-0', 'p-2');
@@ -177,6 +211,10 @@ function formCardBodyDiv(restaurantData) {
     return cardBodyDiv;
 }
 
+/**
+ * Function to form card footer for restaurant card
+ * @param {} restaurantData 
+ */
 function formCardFooter(restaurantData) {
     let cardFooterDiv = document.createElement('div');
     cardFooterDiv.classList.add('card-footer');
@@ -185,7 +223,135 @@ function formCardFooter(restaurantData) {
     return cardFooterDiv;
 }
 
-//console.log("lucknow resu: " +lucknowRestaurants);
-// for(let restaurant of lucknowRestaurants) {
-//     console.log(restaurant.name + " " + restaurant.location);
-// }
+/**
+ * Function to fetch restaurant collections for a given cityId
+ * @param {*} cityId 
+ */
+function getCollectionByCityName(cityId) {
+    let cityName = document.getElementById('city_input').value;
+
+    let collectionDiv = document.getElementById('collectionsDiv');
+    collectionDiv.remove();
+
+    collectionDiv = document.createElement('div');
+    collectionDiv.classList.add('p-5');
+    collectionDiv.id = 'collectionsDiv';
+    document.body.append(collectionDiv);
+
+    let collectionHeading = document.createElement('h2');
+    collectionHeading.innerText = "Collections in " + cityName;
+
+    let collectionDescription = document.createElement('p');
+    collectionDescription.classList.add('card-text');
+    collectionDescription.setAttribute('style', 'font-size:1.1rem');
+    collectionDescription.innerText = 'Explore curated lists of top restaurants, cafes, pubs, and bars in ' + cityName + ' based on trends';
+
+    let allCollectiosLinkSpan = document.createElement('span');
+    allCollectiosLinkSpan.id = 'allCollectiosLinkSpan';
+    allCollectiosLinkSpan.classList.add('restaurantCard');
+    allCollectiosLinkSpan.setAttribute('style', 'float:right;font-size:1.1rem');
+
+    let allCollectiosLink = document.createElement('a');
+    allCollectiosLink.innerText = 'All Collections in ' + cityName;
+    allCollectiosLink.setAttribute('style', 'color:#cb202d');
+
+    allCollectiosLinkSpan.append(allCollectiosLink);
+
+    enrichCollectionsForCityId(cityId);
+
+    
+    collectionDiv.append(collectionHeading, allCollectiosLinkSpan,collectionDescription);
+
+}
+
+/**
+ * Async function  to enrich restaurant colletions for a given city
+ * @param {} cityId 
+ */
+async function enrichCollectionsForCityId(cityId) {
+    return await fetch('https://developers.zomato.com/api/v2.1/collections?city_id=' + cityId, {
+        method: 'GET',
+        headers: {
+            "Content-type" : "application/json; charset = UTF-8",
+            "user-key": "5eedee7882b6189e011a324db07137ca"
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        let collectionsDiv = document.getElementById('collectionsDiv');
+
+        let responseRestaurantCollections = data.collections;
+
+        // console.log("collections data is: " + responseRestaurantCollections);
+        
+        let collectionCardDeckDiv  = document.createElement('div');
+        collectionCardDeckDiv.classList.add('card-deck', 'pt-3');
+        collectionsDiv.appendChild(collectionCardDeckDiv);
+
+        for(let i=0;i<4;i++) {
+            let collectionCard = formCollectionCardFromData(responseRestaurantCollections[i]);
+            collectionCardDeckDiv.append(collectionCard); 
+        }
+
+        document.getElementById('allCollectiosLinkSpan').addEventListener('click', function(event) {
+            let collectionsURL = data.collections[0].collection.share_url.split('/');
+            let allCollectionsURL = collectionsURL.slice(0, collectionsURL.length-1).join('/');
+            location.href = allCollectionsURL;
+        })
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+    });
+}
+
+/**
+ * Function to form collection card using collectionData
+ * @param {} collectionData 
+ */
+function formCollectionCardFromData(collectionData) {
+    let cardDiv = document.createElement('div');
+    cardDiv.classList.add('card', 'restaurantCard');
+
+    cardDiv.append(formCollectionImage(collectionData));
+    cardDiv.append(formCardImageOverlayText(collectionData));
+
+    cardDiv.addEventListener('click', function(event) {
+        location.href = collectionData.collection.share_url;
+    });
+
+    return cardDiv;
+}
+
+/**
+ * Function to form collection card image using collectionData
+ * @param {} collectionData 
+ */
+function formCollectionImage(collectionData) {
+    let image = document.createElement('img');
+    image.classList.add('card-img-top','img-fluid', 'p-0', 'm-0');
+    image.height = '100%';
+    image.src = collectionData.collection.image_url;
+    image.alt = "No Image";
+
+    return image;
+}
+
+/**
+ * Function to form collection card image overlay text using collectionData
+ * @param {} collectionData 
+ */
+function formCardImageOverlayText(collectionData) {
+    let cardTextOverlayDiv = document.createElement('div');
+    cardTextOverlayDiv.classList.add('card-img-overlay', 'text-white', 'd-flex', 'flex-column', 'justify-content-center');
+
+    let cardTitle = document.createElement('h4');
+    cardTitle.classList.add('card-title');
+    cardTitle.innerText = collectionData.collection.title;
+
+    let cardSubTitle = document.createElement('h6');
+    cardSubTitle.classList.add('card-subtitle');
+    cardSubTitle.innerText = collectionData.collection.res_count + " Places";
+
+    cardTextOverlayDiv.append(cardTitle, cardSubTitle);
+    return cardTextOverlayDiv;
+}
