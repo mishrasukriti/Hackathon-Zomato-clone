@@ -78,7 +78,7 @@ function formCardImage(restaurantData) {
     cardImg.classList.add('card-img-top','img-fluid', 'p-0', 'm-0');
     cardImg.height = '100%';
     cardImg.alt = 'No-image found';
-    if(restaurantData.restaurant.featured_image==='')   cardImg.src = 'https://i.pinimg.com/originals/74/8d/24/748d244f165823224b2d467b01a532c2.jpg';
+    if(restaurantData.restaurant.featured_image===undefined || restaurantData.restaurant.featured_image==='' || restaurantData.restaurant.featured_image===null)   cardImg.src = 'https://i.pinimg.com/originals/74/8d/24/748d244f165823224b2d467b01a532c2.jpg';
     else    cardImg.src = restaurantData.restaurant.featured_image;
     return cardImg;
 }
